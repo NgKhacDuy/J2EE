@@ -131,6 +131,8 @@ export class UserService {
   }
 
   async accessToken(user: User) {
+    const currentTimeInSeconds = Math.floor(Date.now() / 1000); // Get current time in seconds
+    const expiresInSeconds = currentTimeInSeconds + (15 * 60); // 15 minutes
     return sign(
       {
         id: user.id,
@@ -139,11 +141,15 @@ export class UserService {
         password: user.password,
       },
       process.env.ACCESS_TOKEN_SECRET_KEY,
-      { expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME },
+      { expiresIn: expiresInSeconds },
     );
   }
 
   async generateRefreshToken(user: User) {
+    const currentTimeInSeconds = Math.floor(Date.now() / 1000); // Get current time in seconds
+    const days = 7;
+    const secondsInADay = 24 * 60 * 60;
+    const expiresInSeconds = currentTimeInSeconds + (days * secondsInADay);
     return sign(
       {
         id: user.id,
@@ -152,7 +158,7 @@ export class UserService {
         password: user.password,
       },
       process.env.REFRESH_TOKEN_SECRET_KEY,
-      { expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME },
+      { expiresIn: expiresInSeconds},
     );
   }
 
